@@ -5,6 +5,7 @@ authors = ["Moritz Ulrich <moritz@tarn-vedra.de>"]
 edition = "2018"
 license = "MIT"
 description = "A library to read and generate Paprika recipe files and recipe collections."
+repository = "https://github.com/the-kenny/libpaprika"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
