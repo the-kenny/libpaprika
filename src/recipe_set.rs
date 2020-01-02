@@ -11,10 +11,21 @@ pub struct RecipeSet {
   pub recipes: HashMap<Uuid, Recipe>,
 }
 
+pub struct DuplicateRecipeError(Uuid);
+
 impl RecipeSet {
   pub fn new() -> RecipeSet {
     RecipeSet {
       recipes: HashMap::new(),
+    }
+  }
+
+  pub fn add_recipe(&mut self, recipe: Recipe) -> Result<(), DuplicateRecipeError> {
+    if self.recipes.contains_key(&recipe.uid) {
+      Err(DuplicateRecipeError(recipe.uid.clone()))
+    } else {
+      self.recipes.insert(recipe.uid.clone(), recipe);
+      Ok(())
     }
   }
 
