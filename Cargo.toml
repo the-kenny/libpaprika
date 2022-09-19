@@ -9,9 +9,9 @@ repository = "https://github.com/the-kenny/libpaprika"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-zip = "0.5.3"
-libflate = "0.1.27"
-serde_derive = "1.0.104"
-serde = "1.0.104"
-serde_json = "1.0.44"
-failure = "0.1.6"
+zip = "0.6.2"
+libflate = "1.2.0"
+serde_derive = "1.0.144"
+serde = "1.0.144"
+serde_json = "1.0.85"
+failure = "0.1.8"
