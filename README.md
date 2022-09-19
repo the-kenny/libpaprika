@@ -2,7 +2,7 @@
 
 [![Latest Version](https://img.shields.io/crates/v/libpaprika.svg)](https://crates.io/crates/libpaprika)
 
-A library to read and generate [Paprika](http://www.paprikaapp.com/) recipe files and recipe collections.
+A library to read and write [Paprika](http://www.paprikaapp.com/) recipe files and recipe collections.
 
 ## Usage
 
