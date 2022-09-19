@@ -8,41 +8,57 @@ use super::*;
 
 #[derive(Debug)]
 pub struct RecipeSet {
-  pub recipes: HashMap<Uuid, Recipe>,
+    pub recipes: HashMap<Uuid, Recipe>,
 }
 
 impl RecipeSet {
-  pub fn new() -> RecipeSet {
-    RecipeSet {
-      recipes: HashMap::new(),
-    }
-  }
-
-  pub fn from_file<P: AsRef<Path>>(path: P) -> Result<RecipeSet, Error> {
-    let file = File::open(path)?;
-    let mut archive = zip::ZipArchive::new(file)?;
-
-    let mut recipes = HashMap::new();
-
-    for i in 0..archive.len() {
-      let file = archive.by_index(i).unwrap();
-      let recipe = Recipe::from_reader(file)?;
-      recipes.insert(recipe.uid.clone(), recipe);
+    pub fn new() -> RecipeSet {
+        RecipeSet {
+            recipes: HashMap::new(),
+        }
     }
 
-    Ok(RecipeSet { recipes: recipes })
-  }
+    pub fn from_file<P: AsRef<Path>>(path: P) -> Result<RecipeSet, Error> {
+        let file = File::open(path)?;
+        let mut archive = zip::ZipArchive::new(file)?;
 
-  pub fn to_writer<W: Write + Seek>(&self, writer: W) -> Result<(), Error> {
-    let mut zip = zip::ZipWriter::new(writer);
-    let options =
-      zip::write::FileOptions::default().compression_method(zip::CompressionMethod::Stored);
+        let mut recipes = HashMap::new();
 
-    for (_, recipe) in &self.recipes {
-      zip.start_file(&format!("{}.paprikarecipe", recipe.name), options)?;
-      recipe.to_writer(&mut zip)?;
+        for i in 0..archive.len() {
+            let file = archive.by_index(i).unwrap();
+            let recipe = Recipe::from_reader(file)?;
+            recipes.insert(recipe.uid.clone(), recipe);
+        }
+
+        Ok(RecipeSet { recipes: recipes })
     }
 
-    Ok(())
-  }
+    pub fn to_writer<W: Write + Seek>(&self, writer: W) -> Result<(), Error> {
+        let mut zip = zip::ZipWriter::new(writer);
+        let options =
+            zip::write::FileOptions::default().compression_method(zip::CompressionMethod::Stored);
+
+        for (_, recipe) in &self.recipes {
+            zip.start_file(&format!("{}.paprikarecipe", recipe.name), options)?;
+            recipe.to_writer(&mut zip)?;
+        }
+
+        Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::RecipeSet;
+
+    #[test]
+    fn from_file() {
+        let set =
+            RecipeSet::from_file("src/test/Neo-Neapolitan Pizza Dough.paprikarecipes").unwrap();
+        assert!(set
+            .recipes
+            .values()
+            .find(|r| r.name == "Neo-Neapolitan Pizza Dough")
+            .is_some())
+    }
 }
