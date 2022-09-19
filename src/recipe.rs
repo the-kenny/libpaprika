@@ -74,7 +74,7 @@ mod tests {
     fn deserialization() {
         let data = include_bytes!("test/Brownies.paprikarecipe.json");
         let result: Result<Recipe, _> = serde_json::from_slice(data);
-        assert!(result.is_ok(), true);
+        assert!(result.is_ok());
 
         let recipe = result.unwrap();
         assert_eq!(recipe.name, "Brownies");
