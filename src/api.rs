@@ -1,11 +1,15 @@
+use std::collections::HashMap;
+
 use futures::StreamExt;
 use futures::TryStreamExt;
 use log::debug;
 use log::info;
+use log::warn;
 use reqwest::Client;
 use serde::Deserialize;
 
 use crate::Recipe;
+use crate::Uuid;
 
 const API_ROOT: &str = "https://www.paprikaapp.com/api/v2";
 
@@ -50,16 +54,22 @@ pub async fn recipes(client: &Client, token: &Token) -> Result<Vec<Recipe>, reqw
         .json()
         .await?;
 
+    let categories = categories(client, token).await?;
+
     let recipes = futures::stream::iter(response.result.into_iter())
         .map(move |re| recipe(client, token, re.uid))
         .buffer_unordered(8)
+        .map_ok(|mut r| {
+            resolve_recipe_categories(&mut r, &categories);
+            r
+        })
         .try_collect::<Vec<Recipe>>()
         .await?;
 
     Ok(recipes)
 }
 
-pub async fn recipe(
+async fn recipe(
     client: &Client,
     token: &Token,
     uid: impl AsRef<str>,
@@ -78,6 +88,49 @@ pub async fn recipe(
     debug!("Result for Recipe {uid}: {response:?}");
 
     Ok(response.result)
+}
+
+pub async fn categories(
+    client: &Client,
+    token: &Token,
+) -> Result<HashMap<Uuid, String>, reqwest::Error> {
+    info!("Fetching Categories");
+
+    #[derive(Deserialize, Debug)]
+    struct Category {
+        uid: Uuid,
+        // parent_uid: Option<Uuid>,
+        name: String,
+    }
+
+    let response: ApiResult<Vec<Category>> = client
+        .get(format!("{API_ROOT}/sync/categories"))
+        .bearer_auth(token)
+        .send()
+        .await?
+        .json()
+        .await?;
+
+    debug!("Categories result: {response:?}");
+
+    Ok(response
+        .result
+        .into_iter()
+        .map(|c| (c.uid, c.name))
+        .collect())
+}
+
+fn resolve_recipe_categories(recipe: &mut Recipe, categories: &HashMap<Uuid, String>) {
+    recipe.categories.iter_mut().for_each(|category| {
+        if let Some(name) = categories.get(category) {
+            *category = name.to_owned();
+        } else {
+            warn!(
+                "Couldn't resolve category {category} on '{}' ({})",
+                recipe.name, recipe.uid
+            );
+        }
+    });
 }
 
 #[cfg(test)]

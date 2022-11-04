@@ -17,7 +17,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let recipes = recipes(&client, &token).await?;
 
     for recipe in recipes {
-        println!("- {}", recipe.name)
+        println!("- {} ({})", recipe.name, recipe.categories.join(", "))
     }
 
     Ok(())
