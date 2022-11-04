@@ -3,6 +3,7 @@ name = "libpaprika"
 version = "0.4.0"
 authors = ["Moritz Ulrich <moritz@tarn-vedra.de>"]
 edition = "2021"
+rust-version = "1.65"
 license = "MIT"
 description = "A library to read and generate Paprika recipe files and recipe collections."
 repository = "https://github.com/the-kenny/libpaprika"
