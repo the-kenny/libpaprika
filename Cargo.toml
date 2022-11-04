@@ -9,11 +9,11 @@ repository = "https://github.com/the-kenny/libpaprika"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-zip = "0.6.2"
+zip = "0.6.3"
 libflate = "1.2.0"
-serde = { version = "1.0.144", features = ["derive"] }
-serde_json = "1.0.85"
-thiserror = "1.0.35"
+serde = { version = "1.0.147", features = ["derive"] }
+serde_json = "1.0.87"
+thiserror = "1.0.37"
 tokio = { version = "1.21.2", features = ["rt", "macros"], optional = true }
 reqwest = { version = "0.11.12", optional = true, features = ["json"] }
 futures = { version = "0.3.25", optional = true }
