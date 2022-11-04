@@ -4,6 +4,9 @@ pub use recipe::*;
 mod recipe_set;
 pub use recipe_set::*;
 
+#[cfg(feature = "api")]
+pub mod api;
+
 use thiserror::Error;
 
 #[derive(Debug, Error)]

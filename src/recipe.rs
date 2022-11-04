@@ -38,6 +38,7 @@ pub struct Recipe {
     pub total_time: String,
     pub name: String,
     pub ingredients: String,
+    #[serde(default)]
     pub photos: Vec<RecipePhoto>,
     pub rating: u8,
     pub description: String,
